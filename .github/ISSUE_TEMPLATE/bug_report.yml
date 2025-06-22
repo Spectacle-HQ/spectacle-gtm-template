@@ -1,0 +1,75 @@
+name: Bug report
+description: Create a report to help us improve the Spectacle GTM template
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        
+  - type: input
+    id: gtm-version
+    attributes:
+      label: GTM Container Version
+      description: What version of Google Tag Manager are you using?
+      placeholder: ex. Version 123
+    validations:
+      required: true
+      
+  - type: input
+    id: template-version
+    attributes:
+      label: Template Version
+      description: What version of the Spectacle GTM template are you using?
+      placeholder: ex. v1.0.0
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: What browsers are you seeing the problem on?
+      multiple: true
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+        - Other
+        
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+      
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Please provide step-by-step instructions to reproduce the issue
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+      
+  - type: textarea
+    id: template-config
+    attributes:
+      label: Template Configuration
+      description: Please share your template configuration (remove any sensitive data like API keys)
+      render: json
+      
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output from browser console
+      render: shell
