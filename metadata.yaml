@@ -1,8 +1,8 @@
 homepage: "https://www.spectacle.com"
 documentation: "https://www.spectaclehq.com/docs/installation/google-tag-manager-gtm"
 versions:
-  - sha: PLACEHOLDER_FOR_INITIAL_COMMIT_SHA
-    changeNotes: |2
+  - sha: 035389006ca9b6c4b65b994307224d1fd981ee27
+    changeNotes: |
       Initial release of Spectacle GTM template
       
       Features:
@@ -10,5 +10,4 @@ versions:
       - User identification with traits
       - Event tracking with properties
       - Group/organization tracking
-      - Privacy compliance with consent mode
       - Debug mode for development
