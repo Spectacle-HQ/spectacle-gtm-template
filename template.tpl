@@ -102,6 +102,21 @@ ___TEMPLATE_PARAMETERS___
             "errorMessage": "Must be HTTPS URL"
           }
         ]
+      },
+      {
+        "type": "CHECKBOX",
+        "name": "autoTrackForms",
+        "checkboxText": "Auto-track form events",
+        "simpleValueType": true,
+        "defaultValue": true,
+        "enablingConditions": [
+          {
+            "paramName": "methodType",
+            "paramValue": "page",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "Automatically track form submissions as Identify and Event. Works with regular HTML forms and HubSpot forms."
       }
     ]
   },
@@ -339,9 +354,10 @@ const callInWindow = require('callInWindow');
 const spectacle = copyFromWindow('spectacle') || {};
 
 const callSpectacle = function(method, argOne, argTwo, argThree) {
+  const loadOptions = {baseUrl: data.baseUrl, autoTrackForms: data.autoTrackForms};
   if (spectacle.inited) {
     // Already inited so call method directly
-    callInWindow('spectacle.load', data.workspaceId, data.baseUrl);
+    callInWindow('spectacle.load', data.workspaceId, loadOptions);
 
     const methodPath = 'spectacle.' + method;
     callInWindow(methodPath, argOne, argTwo, argThree);
@@ -353,7 +369,7 @@ const callSpectacle = function(method, argOne, argTwo, argThree) {
     const spectacleObj = {
       qs: {},
       ws: data.workspaceId,
-      lo: data.baseUrl,
+      lo: loadOptions,
       m: ["identify", "track", "page", "group", "reset"]
     };
 
