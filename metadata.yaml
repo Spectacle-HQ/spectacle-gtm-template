@@ -11,3 +11,10 @@ versions:
       - Event tracking with properties
       - Group/organization tracking
       - Debug mode for development
+
+  - sha: 3dabe4a9e772daa831f4cfcd358223aa49100ae5
+    changeNotes: |
+      Add AutoTrack
+      
+      Features:
+      - Add option to disable form AutoTrack
