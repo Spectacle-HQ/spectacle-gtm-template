@@ -131,11 +131,6 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "identify",
         "type": "EQUALS"
       }
-    ],
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
     ]
   },
   {
