@@ -108,7 +108,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "autoTrackForms",
         "checkboxText": "Auto-track form events",
         "simpleValueType": true,
-        "defaultValue": true,
+        "defaultValue": false,
         "enablingConditions": [
           {
             "paramName": "methodType",
@@ -116,7 +116,14 @@ ___TEMPLATE_PARAMETERS___
             "type": "EQUALS"
           }
         ],
-        "help": "Automatically track form submissions as Identify and Event. Works with regular HTML forms and HubSpot forms."
+        "help": "Automatically track form submissions as Identify and Event. Works with regular HTML forms."
+      },
+      {
+        "type": "TEXT",
+        "name": "cookieDomain",
+        "displayName": "Cookie Domain",
+        "simpleValueType": true,
+        "help": "Explicitly define the domain to place the cookie on. Useful when users land on subdomain A and later convert on subdomain B (e.g., \"example.com\")."
       }
     ]
   },
@@ -350,6 +357,10 @@ const spectacle = copyFromWindow('spectacle') || {};
 
 const callSpectacle = function(method, argOne, argTwo, argThree) {
   const loadOptions = {baseUrl: data.baseUrl, autoTrackForms: data.autoTrackForms};
+  // Add cookieDomain if provided
+  if (data.cookieDomain) {
+    loadOptions.cookieDomain = data.cookieDomain;
+  }
   if (spectacle.inited) {
     // Already inited so call method directly
     callInWindow('spectacle.load', data.workspaceId, loadOptions);
