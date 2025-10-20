@@ -28,3 +28,10 @@ versions:
       - Disable AutoTrack by default
       - Add cookieDomain option
       - Encode uri component for workspaceId 
+
+  - sha: 52a15fa4eae06f5c23c463f1eb0ca5b1dfccc79f
+    changeNotes: |
+      Quick fix
+      
+      Features:
+      - Use correct function for encoding url part
