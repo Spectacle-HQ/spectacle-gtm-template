@@ -18,3 +18,13 @@ versions:
       
       Features:
       - Add option to disable form AutoTrack
+
+  - sha: 62d933f1ae65c71e840ecf21a727f4a905a9402f
+    changeNotes: |
+      Various improvements
+      
+      Features:
+      - Make user id optional for Identify calls
+      - Disable AutoTrack by default
+      - Add cookieDomain option
+      - Encode uri component for workspaceId 
