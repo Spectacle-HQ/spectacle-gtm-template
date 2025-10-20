@@ -472,7 +472,7 @@ if (methodType === 'page') {
 }
 
 // Load the Spectacle script if not already loaded
-const scriptUrl = data.baseUrl.replace('https://t.', 'https://p.') + '/' + data.workspaceId + '.js';
+const scriptUrl = data.baseUrl.replace('https://t.', 'https://p.') + '/' + encodeUriComponent(data.workspaceId) + '.js';
 
 // Debug logging if enabled
 if (data.debugMode) {
