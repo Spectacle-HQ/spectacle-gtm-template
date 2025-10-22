@@ -42,3 +42,10 @@ versions:
       
       Features:
       - Use GTM specific function name
+
+  - sha: 39de9dafe50b74c41012c424e5f77eb2a4d9e586
+    changeNotes: |
+      Quick fix
+      
+      Features:
+      - Add missing import

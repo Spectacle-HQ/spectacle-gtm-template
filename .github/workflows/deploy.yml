@@ -24,7 +24,8 @@ jobs:
         run: |
           aws s3 cp template.tpl s3://${{ secrets.AWS_S3_BUCKET }}/google-tag-manager/template.tpl \
             --content-type "text/plain" \
-            --cache-control "public, max-age=3600"
+            --cache-control "public, max-age=3600" \
+            --content-disposition "attachment; filename=spectacle-gtm-template.tpl"
 
       - name: Create CloudFront invalidation
         run: |
