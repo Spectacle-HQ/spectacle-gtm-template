@@ -35,3 +35,10 @@ versions:
       
       Features:
       - Use correct function for encoding url part
+
+  - sha: 05abed277db543553cfea17a013f121611d976ed
+    changeNotes: |
+      Quick fix
+      
+      Features:
+      - Use GTM specific function name
