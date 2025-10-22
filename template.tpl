@@ -351,6 +351,7 @@ const createQueue = require('createQueue');
 const copyFromWindow = require('copyFromWindow');
 const setInWindow = require('setInWindow');
 const callInWindow = require('callInWindow');
+const encodeUri = require('encodeUri');
 
 // Initialize Spectacle on window if not already present
 const spectacle = copyFromWindow('spectacle') || {};
