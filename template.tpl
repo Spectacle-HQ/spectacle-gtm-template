@@ -104,6 +104,21 @@ ___TEMPLATE_PARAMETERS___
         ]
       },
       {
+        "type": "TEXT",
+        "name": "externalAnonCookie",
+        "displayName": "External Anonymous Cookie",
+        "checkboxText": "Use an external cookies value for anonymous user ids",
+        "simpleValueType": true,
+        "enablingConditions": [
+          {
+            "paramName": "methodType",
+            "paramValue": "page",
+            "type": "EQUALS"
+          }
+        ],
+        "help": "Reuse an existing cookie value (like GA4's _ga) as the anonymous ID to maintain consistent user tracking across analytics tools."
+      },
+      {
         "type": "CHECKBOX",
         "name": "autoTrackForms",
         "checkboxText": "Auto-track form events",
@@ -357,7 +372,7 @@ const encodeUri = require('encodeUri');
 const spectacle = copyFromWindow('spectacle') || {};
 
 const callSpectacle = function(method, argOne, argTwo, argThree) {
-  const loadOptions = {baseUrl: data.baseUrl, autoTrackForms: data.autoTrackForms};
+  const loadOptions = {baseUrl: data.baseUrl, autoTrackForms: data.autoTrackForms, externalAnonCookie: data.externalAnonCookie};
   // Add cookieDomain if provided
   if (data.cookieDomain) {
     loadOptions.cookieDomain = data.cookieDomain;
