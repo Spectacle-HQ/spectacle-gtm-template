@@ -383,7 +383,7 @@ const callSpectacle = function(method, argOne, argTwo, argThree) {
     // Already inited so call method directly
     callInWindow('spectacle.load', data.workspaceId, loadOptions);
 
-    callInWindow('spectacle._callMethod', method, data.gtmOnSuccess, argOne, argTwo, argThree);
+    callInWindow('spectacle._gtmCall', method, data.gtmOnSuccess, argOne, argTwo, argThree);
     return;
   }
 
