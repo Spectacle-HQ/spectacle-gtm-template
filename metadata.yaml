@@ -53,3 +53,7 @@ versions:
   - sha: 547ddd5bab05a39020e285e9d38c0d86e439bfec
     changeNotes: |
       Improve sequencing
+
+  - sha: 3efb1be6c9437e7c47dbd75a850185b051bff7f1
+    changeNotes: |
+      Fix: Use updated method
