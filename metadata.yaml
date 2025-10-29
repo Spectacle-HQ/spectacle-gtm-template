@@ -57,3 +57,7 @@ versions:
   - sha: 3efb1be6c9437e7c47dbd75a850185b051bff7f1
     changeNotes: |
       Fix: Use updated method
+
+  - sha: 5926e1bf32f2cfdf325b8f5da573a56da6cb9f11
+    changeNotes: |
+      Fix: Update permission
