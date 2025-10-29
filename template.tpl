@@ -850,7 +850,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "spectacle._callMethod"
+                    "string": "spectacle._gtmCall"
                   },
                   {
                     "type": 8,
