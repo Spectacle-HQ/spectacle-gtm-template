@@ -377,12 +377,13 @@ const callSpectacle = function(method, argOne, argTwo, argThree) {
   if (data.cookieDomain) {
     loadOptions.cookieDomain = data.cookieDomain;
   }
-  if (spectacle.inited) {
+
+  const spectacleInited = copyFromWindow('spectacle.inited');
+  if (spectacleInited) {
     // Already inited so call method directly
     callInWindow('spectacle.load', data.workspaceId, loadOptions);
 
-    const methodPath = 'spectacle.' + method;
-    callInWindow(methodPath, argOne, argTwo, argThree);
+    callInWindow('spectacle._callMethod', method, data.gtmOnSuccess, argOne, argTwo, argThree);
     return;
   }
 
@@ -408,6 +409,10 @@ const callSpectacle = function(method, argOne, argTwo, argThree) {
     spectacle.qs[method].push([argOne, argTwo, argThree]);
     setInWindow('spectacle', spectacle, true);
   }
+
+  // Load the Spectacle script if not already loaded
+  const scriptUrl = data.baseUrl.replace('https://t.', 'https://p.') + '/' + encodeUri(data.workspaceId) + '.js';
+  injectScript(scriptUrl, data.gtmOnSuccess, data.gtmOnFailure, 'spectacle-script');
 };
 
 // Execute the appropriate method based on template configuration
@@ -486,20 +491,6 @@ if (methodType === 'page') {
   // Call group with groupId and traits
   callSpectacle('group', data.groupId, groupTraits);
 }
-
-// Load the Spectacle script if not already loaded
-const scriptUrl = data.baseUrl.replace('https://t.', 'https://p.') + '/' + encodeUri(data.workspaceId) + '.js';
-
-// Debug logging if enabled
-if (data.debugMode) {
-  log('Spectacle GTM Template - Method:', methodType);
-  log('Spectacle GTM Template - Workspace ID:', data.workspaceId);
-  log('Spectacle GTM Template - Script URL:', scriptUrl);
-}
-
-// Inject the Spectacle script
-injectScript(scriptUrl, data.gtmOnSuccess, data.gtmOnFailure, 'spectacle-script');
-
 
 ___WEB_PERMISSIONS___
 
@@ -782,6 +773,84 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "spectacle.group"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "spectacle.inited"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "spectacle._callMethod"
                   },
                   {
                     "type": 8,
