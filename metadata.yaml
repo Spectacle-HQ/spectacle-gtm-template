@@ -61,3 +61,12 @@ versions:
   - sha: 5926e1bf32f2cfdf325b8f5da573a56da6cb9f11
     changeNotes: |
       Fix: Update permission
+
+  - sha: 8d5b87df92d7af4d17796c0827a1f2bb2020cc90
+    changeNotes: |
+      Improve UX for revenue tracking
+
+      Features:
+        - Allow using GA4 Ecom data
+        - Allow passing revenue in major units
+        - Ensure proper formatting for Spectacle API
