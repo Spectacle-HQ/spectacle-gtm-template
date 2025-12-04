@@ -79,6 +79,21 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true
   },
   {
+    "type": "CHECKBOX",
+    "name": "lensEnabled",
+    "displayName": "Spectacle Lens",
+    "checkboxText": "Enable Lens",
+    "help": "Spectacle Lens can reveal company data of anonymous visitors. <a href='https://www.spectaclehq.com/docs/features/lens'>Learn more</a>",
+    "simpleValueType": true,
+    "enablingConditions": [
+      {
+        "paramName": "methodType",
+        "paramValue": "page",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
     "type": "GROUP",
     "name": "advanced",
     "displayName": "Advanced",
@@ -499,7 +514,7 @@ const storeTransactionId = function(transactionId) {
 };
 
 const callSpectacle = function(method, argOne, argTwo, argThree) {
-  const loadOptions = {baseUrl: data.baseUrl, autoTrackForms: data.autoTrackForms, externalAnonCookie: data.externalAnonCookie};
+  const loadOptions = {baseUrl: data.baseUrl, autoTrackForms: data.autoTrackForms, externalAnonCookie: data.externalAnonCookie, trackingSource: "gtm", lens: data.lensEnabled};
   // Add cookieDomain if provided
   if (data.cookieDomain) {
     loadOptions.cookieDomain = data.cookieDomain;
