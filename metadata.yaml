@@ -70,3 +70,7 @@ versions:
         - Allow using GA4 Ecom data
         - Allow passing revenue in major units
         - Ensure proper formatting for Spectacle API
+
+  - sha: fded2b8c35f6f0ef45bb374a00a5fd6de00f65d9
+    changeNotes: |
+      Add option to enable Lens
