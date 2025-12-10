@@ -371,6 +371,20 @@ ___TEMPLATE_PARAMETERS___
                 "type": "EQUALS"
               }
             ]
+          },
+          {
+            "type": "TEXT",
+            "name": "transactionId",
+            "displayName": "Transaction id",
+            "simpleValueType": true,
+            "enablingConditions": [
+              {
+                "paramName": "methodType",
+                "paramValue": "track",
+                "type": "EQUALS"
+              }
+            ],
+            "help": "A unique transaction id. Used for de-duplication of events with revenue. If no transaction id is provided, Spectacle automatically uses a combination of the visitor id and timestamp as the transaction id. For refunds, make sure to use a different transaction id than the original transaction id being refunded."
           }
         ]
       }
@@ -611,6 +625,10 @@ if (methodType === 'page') {
     if (revenueValue >= 0) {
       properties.revenue = Math.round(revenueValue).toString();
     }
+  }
+
+  if (data.transactionId) {
+    properties.transactionId = data.transactionId;
   }
 
   if (data.revenueFormat === 'majorUnits' && data.revenueMajorUnits) {
