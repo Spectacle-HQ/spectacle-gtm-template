@@ -74,3 +74,7 @@ versions:
   - sha: fded2b8c35f6f0ef45bb374a00a5fd6de00f65d9
     changeNotes: |
       Add option to enable Lens
+
+  - sha: 4b54af84256a653020c3e7be37d448d111720bd2
+    changeNotes: |
+      Add option to pass transaction id. Used for deduplication of revenue events.
