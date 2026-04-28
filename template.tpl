@@ -134,21 +134,6 @@ ___TEMPLATE_PARAMETERS___
         "help": "Reuse an existing cookie value (like GA4's _ga) as the anonymous ID to maintain consistent user tracking across analytics tools."
       },
       {
-        "type": "CHECKBOX",
-        "name": "autoTrackForms",
-        "checkboxText": "Auto-track form events",
-        "simpleValueType": true,
-        "defaultValue": false,
-        "enablingConditions": [
-          {
-            "paramName": "methodType",
-            "paramValue": "page",
-            "type": "EQUALS"
-          }
-        ],
-        "help": "Automatically track form submissions as Identify and Event. Works with regular HTML forms."
-      },
-      {
         "type": "TEXT",
         "name": "cookieDomain",
         "displayName": "Cookie Domain",
