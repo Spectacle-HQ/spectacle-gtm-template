@@ -78,3 +78,7 @@ versions:
   - sha: 4b54af84256a653020c3e7be37d448d111720bd2
     changeNotes: |
       Add option to pass transaction id. Used for deduplication of revenue events.
+
+  - sha: 07f2753c8fd2ac50cada44a843a809070b145299
+    changeNotes: |
+      Remove auto-track and update icon
