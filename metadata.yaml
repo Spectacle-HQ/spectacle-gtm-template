@@ -1,6 +1,9 @@
 homepage: "https://www.spectaclehq.com"
 documentation: "https://www.spectaclehq.com/docs/installation/google-tag-manager-gtm"
 versions:
+  - sha: 0808b03f2ff712ce66dc50bb0a672f14d37c4e05
+    changeNotes: |
+      Fix: homepage link
   - sha: 07f2753c8fd2ac50cada44a843a809070b145299
     changeNotes: |
       Remove auto-track and update icon
