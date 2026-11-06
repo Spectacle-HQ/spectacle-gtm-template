@@ -444,6 +444,32 @@ ___TEMPLATE_PARAMETERS___
     ]
   },
   {
+    "type": "GROUP",
+    "name": "consentSettings",
+    "displayName": "Consent",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "RADIO",
+        "name": "analyticsStorageConsent",
+        "radioItems": [
+          {
+            "value": "required",
+            "displayValue": "Respect the visitor's analytics consent",
+            "help": "While <i>analytics_storage</i> is denied in Google consent mode, the tag sets no cookie and sends nothing to Spectacle. It runs once the visitor grants it. Sites without consent mode are not affected."
+          },
+          {
+            "value": "optional",
+            "displayValue": "Send data always",
+            "help": "Sets cookies and sends data whatever the visitor chose."
+          }
+        ],
+        "simpleValueType": true,
+        "defaultValue": "required"
+      }
+    ]
+  },
+  {
     "type": "CHECKBOX",
     "name": "debugMode",
     "displayName": "Debug Mode",
@@ -466,9 +492,13 @@ const getCookieValues = require('getCookieValues');
 const setCookie = require('setCookie');
 const makeNumber = require('makeNumber');
 const Math = require('Math');
+const isConsentGranted = require('isConsentGranted');
+const addConsentListener = require('addConsentListener');
 
-// Initialize Spectacle on window if not already present
-const spectacle = copyFromWindow('spectacle') || {};
+// The tag reports its outcome once. A run that waited for consent comes after
+// the tag already reported, so it reports nowhere.
+let onSuccess = data.gtmOnSuccess;
+let onFailure = data.gtmOnFailure;
 
 // Constants for deduplication
 const TRANSACTION_DEDUP_COOKIE_KEY = 'sp__transaction_ids';
@@ -519,12 +549,15 @@ const callSpectacle = function(method, argOne, argTwo, argThree) {
     loadOptions.cookieDomain = data.cookieDomain;
   }
 
+  // Read when called, not when the tag fired: a run that waited for consent
+  // may find another tag's queue there by now.
+  const spectacle = copyFromWindow('spectacle') || {};
   const spectacleInited = copyFromWindow('spectacle.inited');
   if (spectacleInited) {
     // Already inited so call method directly
     callInWindow('spectacle.load', data.workspaceId, loadOptions);
 
-    callInWindow('spectacle._gtmCall', method, data.gtmOnSuccess, argOne, argTwo, argThree);
+    callInWindow('spectacle._gtmCall', method, onSuccess, argOne, argTwo, argThree);
     return;
   }
 
@@ -553,129 +586,152 @@ const callSpectacle = function(method, argOne, argTwo, argThree) {
 
   // Load the Spectacle script if not already loaded
   const scriptUrl = data.baseUrl.replace('https://t.', 'https://p.') + '/' + encodeUri(data.workspaceId) + '.js';
-  injectScript(scriptUrl, data.gtmOnSuccess, data.gtmOnFailure, 'spectacle-script');
+  injectScript(scriptUrl, onSuccess, onFailure, 'spectacle-script');
 };
 
 // Execute the appropriate method based on template configuration
-const methodType = data.methodType;
+const run = function() {
+  const methodType = data.methodType;
 
-if (methodType === 'page') {
-  // Page method - auto-collects all data, no parameters needed
-  callSpectacle('page');
+  if (methodType === 'page') {
+    // Page method - auto-collects all data, no parameters needed
+    callSpectacle('page');
 
-} else if (methodType === 'identify') {
-  // Build traits object
-  const traits = {};
+  } else if (methodType === 'identify') {
+    // Build traits object
+    const traits = {};
 
-  // Add email if provided
-  if (data.email) {
-    traits.email = data.email;
-  }
-
-  // Add name fields if provided
-  if (data.firstName) {
-    traits.firstName = data.firstName;
-  }
-  if (data.lastName) {
-    traits.lastName = data.lastName;
-  }
-
-  // Add additional traits from table
-  if (data.userTraits) {
-    for (let i = 0; i < data.userTraits.length; i++) {
-      const trait = data.userTraits[i];
-      if (trait.key && trait.value) {
-        traits[trait.key] = trait.value;
-      }
-    }
-  }
-
-  // Call identify with userId and traits
-  callSpectacle('identify', data.userId, traits);
-} else if (methodType === 'track') {
-  // Build properties object
-  const properties = {};
-
-  if (data.eventProperties) {
-    for (let i = 0; i < data.eventProperties.length; i++) {
-      const prop = data.eventProperties[i];
-      if (prop.key && prop.value) {
-        properties[prop.key] = prop.value;
-      }
-    }
-  }
-
-  if (data.revenue) {
-    const revenueValue = makeNumber(data.revenue);
-    if (revenueValue >= 0) {
-      properties.revenue = Math.round(revenueValue).toString();
-    }
-  }
-
-  if (data.transactionId) {
-    properties.transactionId = data.transactionId;
-  }
-
-  if (data.revenueFormat === 'majorUnits' && data.revenueMajorUnits) {
-    const revenueMajor = makeNumber(data.revenueMajorUnits);
-    if (revenueMajor >= 0) {
-      properties.revenue = Math.round(revenueMajor * 100).toString();
-    }
-  }
-
-  if (data.currency) {
-    properties.currency = data.currency;
-  }
-
-  // Add revenue and currency if specified
-  if (data.useGA4EcomData) {
-    const transactionId = copyFromDataLayer('ecommerce.transaction_id');
-    if (transactionId) {
-      // Don't send duplicate transactions
-      if (hasTransactionId(transactionId)) {
-        data.gtmOnSuccess();
-        return;
-      }
-
-      storeTransactionId(transactionId);
-      properties.transactionId = transactionId;
+    // Add email if provided
+    if (data.email) {
+      traits.email = data.email;
     }
 
-    const amount = makeNumber(copyFromDataLayer('ecommerce.value'));
-    if (amount >= 0) {
-      if (data.eventName === "purchase") {
-        properties.revenue = Math.round(amount * 100).toString();
-      }
+    // Add name fields if provided
+    if (data.firstName) {
+      traits.firstName = data.firstName;
+    }
+    if (data.lastName) {
+      traits.lastName = data.lastName;
+    }
 
-      if (data.eventName === "refund") {
-        properties.revenue = "-" + Math.round(amount * 100).toString();
+    // Add additional traits from table
+    if (data.userTraits) {
+      for (let i = 0; i < data.userTraits.length; i++) {
+        const trait = data.userTraits[i];
+        if (trait.key && trait.value) {
+          traits[trait.key] = trait.value;
+        }
       }
     }
 
-    const currency = copyFromDataLayer('ecommerce.currency');
-    if (currency && currency.length === 3) {
-      properties.currency = currency;
-    }
-  }
+    // Call identify with userId and traits
+    callSpectacle('identify', data.userId, traits);
+  } else if (methodType === 'track') {
+    // Build properties object
+    const properties = {};
 
-  // Call track with event name and properties
-  callSpectacle('track', data.eventName, properties);
-
-} else if (methodType === 'group') {
-  // Build group traits object
-  const groupTraits = {};
-
-  if (data.groupTraits) {
-    for (let i = 0; i < data.groupTraits.length; i++) {
-      const trait = data.groupTraits[i];
-      if (trait.key && trait.value) {
-        groupTraits[trait.key] = trait.value;
+    if (data.eventProperties) {
+      for (let i = 0; i < data.eventProperties.length; i++) {
+        const prop = data.eventProperties[i];
+        if (prop.key && prop.value) {
+          properties[prop.key] = prop.value;
+        }
       }
     }
-  }
 
-  // Call group with groupId and traits
-  callSpectacle('group', data.groupId, groupTraits);
+    if (data.revenue) {
+      const revenueValue = makeNumber(data.revenue);
+      if (revenueValue >= 0) {
+        properties.revenue = Math.round(revenueValue).toString();
+      }
+    }
+
+    if (data.transactionId) {
+      properties.transactionId = data.transactionId;
+    }
+
+    if (data.revenueFormat === 'majorUnits' && data.revenueMajorUnits) {
+      const revenueMajor = makeNumber(data.revenueMajorUnits);
+      if (revenueMajor >= 0) {
+        properties.revenue = Math.round(revenueMajor * 100).toString();
+      }
+    }
+
+    if (data.currency) {
+      properties.currency = data.currency;
+    }
+
+    // Add revenue and currency if specified
+    if (data.useGA4EcomData) {
+      const transactionId = copyFromDataLayer('ecommerce.transaction_id');
+      if (transactionId) {
+        // Don't send duplicate transactions
+        if (hasTransactionId(transactionId)) {
+          onSuccess();
+          return;
+        }
+
+        storeTransactionId(transactionId);
+        properties.transactionId = transactionId;
+      }
+
+      const amount = makeNumber(copyFromDataLayer('ecommerce.value'));
+      if (amount >= 0) {
+        if (data.eventName === "purchase") {
+          properties.revenue = Math.round(amount * 100).toString();
+        }
+
+        if (data.eventName === "refund") {
+          properties.revenue = "-" + Math.round(amount * 100).toString();
+        }
+      }
+
+      const currency = copyFromDataLayer('ecommerce.currency');
+      if (currency && currency.length === 3) {
+        properties.currency = currency;
+      }
+    }
+
+    // Call track with event name and properties
+    callSpectacle('track', data.eventName, properties);
+
+  } else if (methodType === 'group') {
+    // Build group traits object
+    const groupTraits = {};
+
+    if (data.groupTraits) {
+      for (let i = 0; i < data.groupTraits.length; i++) {
+        const trait = data.groupTraits[i];
+        if (trait.key && trait.value) {
+          groupTraits[trait.key] = trait.value;
+        }
+      }
+    }
+
+    // Call group with groupId and traits
+    callSpectacle('group', data.groupId, groupTraits);
+  }
+};
+
+// As Google's addConsentListener example does: until the visitor grants
+// analytics_storage, nothing is stored or sent, and the call runs once they
+// do. A type that was never set counts as granted, so a site without consent
+// mode is not affected. Tags saved before this setting existed respect consent
+// as well.
+if (data.analyticsStorageConsent === 'optional' || isConsentGranted('analytics_storage')) {
+  run();
+} else {
+  let ran = false;
+  addConsentListener('analytics_storage', function(consentType, granted) {
+    if (ran || !granted) {
+      return;
+    }
+    ran = true;
+    run();
+  });
+  onSuccess = function() {};
+  onFailure = function() {};
+  data.gtmOnSuccess();
 }
 
 ___WEB_PERMISSIONS___
@@ -1194,6 +1250,59 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "ecommerce.transaction_id"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_consent",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "consentTypes",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "analytics_storage"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
               }
             ]
           }
