@@ -7,7 +7,7 @@ Official Google Tag Manager template for Spectacle analytics integration.
 - 👤 User identification and traits
 - 🎯 Custom event tracking  
 - 🏢 Group/organization tracking
-- 🔒 Privacy compliance built-in
+- 🔒 Consent aware: while the visitor denies `analytics_storage` in Google consent mode, the tag sets no cookie and sends nothing, and runs once they grant it. Sites without consent mode are not affected.
 - 🐛 Debug mode for development
 
 ## Installation
@@ -19,6 +19,11 @@ Official Google Tag Manager template for Spectacle analytics integration.
 
 ## Documentation
 Visit [docs.spectaclehq.com/docs/installation/google-tag-manager-gtm](https://www.spectaclehq.com/docs/installation/google-tag-manager-gtm) for complete setup guide.
+
+## Development
+
+Run `node --test tests/*.test.mjs` with Node.js 22 or later. The tests execute
+the template's script with mocked GTM APIs and validate its JSON sections.
 
 ## Support
 - 📖 [Documentation](https://www.spectaclehq.com/docs/installation/google-tag-manager-gtm)
